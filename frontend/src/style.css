@@ -1,0 +1,82 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import './styles/retro.css';
+
+/* DungGeunMo 한글 픽셀 폰트 */
+@font-face {
+  font-family: 'DungGeunMo';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/DungGeunMo.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Tailwind v4 테마 설정 */
+@theme {
+  /* 레트로 배경 색상 */
+  --color-retro-bg: #0f0f23;
+  --color-retro-card: #16213e;
+
+  /* 네온 색상 */
+  --color-neon-pink: #ff2d6a;
+  --color-neon-cyan: #00fff2;
+  --color-neon-yellow: #fffc00;
+  --color-neon-green: #00ff66;
+  --color-neon-orange: #ff9500;
+  --color-neon-purple: #a855f7;
+
+  /* 폰트 */
+  --font-pixel: 'Press Start 2P', 'DungGeunMo', cursive;
+  --font-korean: 'DungGeunMo', 'Press Start 2P', cursive;
+
+  /* 그림자 (네온 효과) */
+  --shadow-neon-pink: 0 0 5px #ff2d6a, 0 0 20px #ff2d6a, 0 0 40px #ff2d6a;
+  --shadow-neon-cyan: 0 0 5px #00fff2, 0 0 20px #00fff2, 0 0 40px #00fff2;
+  --shadow-neon-yellow: 0 0 5px #fffc00, 0 0 20px #fffc00, 0 0 40px #fffc00;
+  --shadow-neon-green: 0 0 5px #00ff66, 0 0 20px #00ff66, 0 0 40px #00ff66;
+  --shadow-neon-orange: 0 0 5px #ff9500, 0 0 20px #ff9500, 0 0 40px #ff9500;
+  --shadow-neon-purple: 0 0 5px #a855f7, 0 0 20px #a855f7, 0 0 40px #a855f7;
+
+  /* 애니메이션 */
+  --animate-glow: glow 2s ease-in-out infinite alternate;
+  --animate-blink: blink 1s step-end infinite;
+  --animate-scanline: scanline 8s linear infinite;
+  --animate-pulse-neon: pulse-neon 2s ease-in-out infinite;
+
+  @keyframes glow {
+    0% {
+      filter: brightness(1) drop-shadow(0 0 5px currentColor);
+    }
+    100% {
+      filter: brightness(1.2) drop-shadow(0 0 20px currentColor);
+    }
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  @keyframes scanline {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+  }
+
+  @keyframes pulse-neon {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+}
+
+/* 레트로 게임 기본 스타일 */
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    background-color: var(--color-retro-bg);
+    color: white;
+    font-family: var(--font-pixel);
+    min-height: 100vh;
+  }
+}

@@ -1,0 +1,25 @@
+import { Router } from 'express'
+import prisma from '../lib/prisma'
+
+const router = Router()
+
+// GET /api/categories - 카테고리 조회
+router.get('/', async (req, res) => {
+  try {
+    const categories = await prisma.category.findMany({
+      include: {
+        _count: {
+          select: { menus: true },
+        },
+      },
+      orderBy: { id: 'asc' },
+    })
+
+    res.json(categories)
+  } catch (error) {
+    console.error('Error fetching categories:', error)
+    res.status(500).json({ error: 'Failed to fetch categories' })
+  }
+})
+
+export default router

@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat:*)",
+      "Bash(printf:*)",
+      "Bash(yarn dev)",
+      "Bash(yarn build:*)",
+      "Bash(yarn add:*)",
+      "Bash(npx prisma generate:*)",
+      "Bash(yarn db:seed)",
+      "Bash(npx ts-node:*)",
+      "Bash(PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION=\"해도 돼\" npx prisma db push:*)",
+      "Bash(npx prisma:*)",
+      "Bash(yarn remove:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
