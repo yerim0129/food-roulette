@@ -13,6 +13,9 @@ const emit = defineEmits<{
   spinEnd: [menu: Food]
 }>()
 
+// 미리 선택된 결과 (스핀 시작 시 결정)
+const preSelectedMenu = ref<Food | null>(null)
+
 // 네온 색상 타입
 interface NeonColor {
   bg: string
@@ -170,16 +173,13 @@ const animateSpin = () => {
       requestAnimationFrame(animate)
     } else {
       isAnimating.value = false
-      // 결과 계산
-      const normalizedRotation = currentRotation.value % (2 * Math.PI)
-      const sliceAngle = (2 * Math.PI) / props.menus.length
-      // 포인터가 상단에 있으므로, 현재 회전에서 어떤 섹터가 상단을 가리키는지 계산
-      const adjustedRotation = (2 * Math.PI - normalizedRotation + Math.PI / 2) % (2 * Math.PI)
-      const selectedIndex = Math.floor(adjustedRotation / sliceAngle) % props.menus.length
-      const selectedMenu = props.menus[selectedIndex]
-      if (selectedMenu) {
-        emit('spinEnd', selectedMenu)
+      // 실제 포인터가 가리키는 메뉴를 계산하여 emit (100% 정확)
+      const actualIndex = getMenuIndexAtPointer(currentRotation.value)
+      const actualMenu = props.menus[actualIndex]
+      if (actualMenu) {
+        emit('spinEnd', actualMenu)
       }
+      preSelectedMenu.value = null
     }
   }
 
@@ -187,15 +187,60 @@ const animateSpin = () => {
   requestAnimationFrame(animate)
 }
 
+// 현재 휠 회전 상태에서 포인터가 가리키는 메뉴 인덱스 계산
+const getMenuIndexAtPointer = (rotation: number): number => {
+  const menuCount = props.menus.length
+  if (menuCount === 0) return 0
+
+  const sliceAngle = (2 * Math.PI) / menuCount
+
+  // 휠 그리기: 섹터 i는 (i * sliceAngle - PI/2) ~ ((i+1) * sliceAngle - PI/2)
+  // 포인터는 상단(12시, 각도 -PI/2 또는 270도)에 고정
+  // 휠이 rotation만큼 회전하면, 포인터 기준 각도는 -rotation
+  // 포인터가 가리키는 휠상의 원래 각도: -PI/2 - rotation
+
+  // 정규화: 0 ~ 2PI 범위로
+  let pointerAngle = (-Math.PI / 2 - rotation) % (2 * Math.PI)
+  if (pointerAngle < 0) pointerAngle += 2 * Math.PI
+
+  // 섹터 i의 범위: (i * sliceAngle) ~ ((i+1) * sliceAngle)
+  // 단, 휠 그리기에서 -PI/2 오프셋을 적용했으므로 이를 고려
+  // 실제로는 pointerAngle에 PI/2를 더해서 0기준으로 맞춤
+  let adjustedAngle = (pointerAngle + Math.PI / 2) % (2 * Math.PI)
+
+  const index = Math.floor(adjustedAngle / sliceAngle) % menuCount
+  return index
+}
+
 // 스핀 시작 감지
 watch(() => props.isSpinning, (spinning) => {
   if (spinning && !isAnimating.value && props.menus.length > 0) {
-    // 랜덤 회전량 (최소 5바퀴 + 랜덤)
+    const menuCount = props.menus.length
+    const sliceAngle = (2 * Math.PI) / menuCount
+
+    // 1. 랜덤으로 결과 메뉴 선택
+    const randomIndex = Math.floor(Math.random() * menuCount)
+    preSelectedMenu.value = props.menus[randomIndex] ?? null
+
+    // 2. 최소 회전량 (5~7바퀴)
     const minSpins = 5
-    const maxExtraSpins = 3
-    const randomSpins = minSpins + Math.random() * maxExtraSpins
-    const randomOffset = Math.random() * 2 * Math.PI
-    targetRotation.value = currentRotation.value + randomSpins * 2 * Math.PI + randomOffset
+    const extraSpins = Math.random() * 2
+    const baseRotation = (minSpins + extraSpins) * 2 * Math.PI
+
+    // 3. 선택된 섹터의 중앙이 포인터(상단)에 오도록 목표 회전량 계산
+    // 섹터 i의 중앙 각도 (휠 기준): i * sliceAngle + sliceAngle/2 - PI/2
+    // 이 각도가 포인터(-PI/2)에 오려면, 휠이 (i * sliceAngle + sliceAngle/2)만큼 회전해야 함
+    const targetSectorCenter = randomIndex * sliceAngle + sliceAngle / 2
+
+    // 현재 회전을 0~2PI로 정규화
+    const currentNormalized = ((currentRotation.value % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)
+
+    // 목표 회전량: 기본 회전 + (목표 섹터 위치 - 현재 위치)
+    let additionalRotation = targetSectorCenter - currentNormalized
+    if (additionalRotation < 0) additionalRotation += 2 * Math.PI
+
+    targetRotation.value = currentRotation.value + baseRotation + additionalRotation
+
     animateSpin()
   }
 })
