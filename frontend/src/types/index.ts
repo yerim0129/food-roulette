@@ -13,3 +13,9 @@ export interface Category {
   emoji: string
   active: boolean
 }
+
+export interface HistoryItem {
+  id: number
+  food: Food
+  createdAt: Date
+}

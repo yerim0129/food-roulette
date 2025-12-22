@@ -1,13 +1,8 @@
 import { Router } from 'express'
 import prisma from '../lib/prisma'
+import { isValidPositiveInt, MAX_HISTORY_LIMIT } from '../utils/validation'
 
 const router = Router()
-
-// 유효한 양의 정수인지 확인
-const isValidPositiveInt = (value: unknown): boolean => {
-  const num = Number(value)
-  return !isNaN(num) && Number.isInteger(num) && num > 0
-}
 
 // GET /api/history - 히스토리 조회
 router.get('/', async (req, res) => {
@@ -28,7 +23,7 @@ router.get('/', async (req, res) => {
         },
       },
       orderBy: { createdAt: 'desc' },
-      take: Number(limit),
+      take: Math.min(Number(limit), MAX_HISTORY_LIMIT),
     })
 
     res.json(history)

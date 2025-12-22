@@ -17,7 +17,6 @@ const emit = defineEmits<{
 
 const handleClick = (event: MouseEvent) => {
   if (!props.disabled) {
-    // TODO: 8bit 사운드 재생
     emit('click', event)
   }
 }

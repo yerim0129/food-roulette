@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { Food, Category } from '@/types'
+import { storage } from '@/utils/storage'
 
 const STORAGE_KEY = 'food-roulette-menus'
 
@@ -51,21 +52,17 @@ export const useMenuStore = defineStore('menu', () => {
 
   // Actions
   const loadFromStorage = () => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY)
-      if (stored) {
-        menus.value = JSON.parse(stored)
-      } else {
-        menus.value = [...defaultMenus]
-        saveToStorage()
-      }
-    } catch {
+    const stored = storage.get<Food[] | null>(STORAGE_KEY, null)
+    if (stored) {
+      menus.value = stored
+    } else {
       menus.value = [...defaultMenus]
+      saveToStorage()
     }
   }
 
   const saveToStorage = () => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(menus.value))
+    storage.set(STORAGE_KEY, menus.value)
   }
 
   const addMenu = (menu: Omit<Food, 'id'>) => {

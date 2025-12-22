@@ -1,12 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import type { Food } from '@/types'
-
-export interface HistoryItem {
-  id: number
-  food: Food
-  createdAt: Date
-}
+import type { Food, HistoryItem } from '@/types'
+import { storage } from '@/utils/storage'
 
 const STORAGE_KEY = 'food-roulette-history'
 
@@ -15,25 +10,18 @@ export const useHistoryStore = defineStore('history', () => {
   let nextId = 1
 
   const loadFromStorage = () => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY)
-      if (stored) {
-        const parsed = JSON.parse(stored)
-        history.value = parsed.map((item: HistoryItem) => ({
-          ...item,
-          createdAt: new Date(item.createdAt),
-        }))
-        if (history.value.length > 0) {
-          nextId = Math.max(...history.value.map(h => h.id)) + 1
-        }
-      }
-    } catch {
-      history.value = []
+    const stored = storage.get<HistoryItem[]>(STORAGE_KEY, [])
+    history.value = stored.map((item) => ({
+      ...item,
+      createdAt: new Date(item.createdAt),
+    }))
+    if (history.value.length > 0) {
+      nextId = Math.max(...history.value.map(h => h.id)) + 1
     }
   }
 
   const saveToStorage = () => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(history.value))
+    storage.set(STORAGE_KEY, history.value)
   }
 
   const addHistory = (food: Food) => {

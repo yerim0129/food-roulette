@@ -1,13 +1,14 @@
 import { Router } from 'express'
 import prisma from '../lib/prisma'
+import {
+  isValidPositiveInt,
+  MAX_NAME_LENGTH,
+  MAX_EMOJI_LENGTH,
+  MAX_DESCRIPTION_LENGTH,
+  MAX_URL_LENGTH,
+} from '../utils/validation'
 
 const router = Router()
-
-// 유효한 양의 정수인지 확인
-const isValidPositiveInt = (value: unknown): boolean => {
-  const num = Number(value)
-  return !isNaN(num) && Number.isInteger(num) && num > 0
-}
 
 // GET /api/menus - 전체 메뉴 조회
 router.get('/', async (req, res) => {
@@ -82,6 +83,20 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'name and emoji must be strings' })
     }
 
+    // 문자열 길이 검증
+    if (name.trim().length > MAX_NAME_LENGTH) {
+      return res.status(400).json({ error: `name must be ${MAX_NAME_LENGTH} characters or less` })
+    }
+    if (emoji.trim().length > MAX_EMOJI_LENGTH) {
+      return res.status(400).json({ error: `emoji must be ${MAX_EMOJI_LENGTH} characters or less` })
+    }
+    if (description && description.length > MAX_DESCRIPTION_LENGTH) {
+      return res.status(400).json({ error: `description must be ${MAX_DESCRIPTION_LENGTH} characters or less` })
+    }
+    if (imageUrl && imageUrl.length > MAX_URL_LENGTH) {
+      return res.status(400).json({ error: `imageUrl must be ${MAX_URL_LENGTH} characters or less` })
+    }
+
     const menu = await prisma.menu.create({
       data: {
         name: name.trim(),
@@ -116,6 +131,20 @@ router.put('/:id', async (req, res) => {
     // categoryId 유효성 검증 (제공된 경우)
     if (categoryId !== undefined && !isValidPositiveInt(categoryId)) {
       return res.status(400).json({ error: 'categoryId must be a positive integer' })
+    }
+
+    // 문자열 길이 검증 (제공된 경우)
+    if (name && String(name).trim().length > MAX_NAME_LENGTH) {
+      return res.status(400).json({ error: `name must be ${MAX_NAME_LENGTH} characters or less` })
+    }
+    if (emoji && String(emoji).trim().length > MAX_EMOJI_LENGTH) {
+      return res.status(400).json({ error: `emoji must be ${MAX_EMOJI_LENGTH} characters or less` })
+    }
+    if (description && description.length > MAX_DESCRIPTION_LENGTH) {
+      return res.status(400).json({ error: `description must be ${MAX_DESCRIPTION_LENGTH} characters or less` })
+    }
+    if (imageUrl && imageUrl.length > MAX_URL_LENGTH) {
+      return res.status(400).json({ error: `imageUrl must be ${MAX_URL_LENGTH} characters or less` })
     }
 
     const menu = await prisma.menu.update({

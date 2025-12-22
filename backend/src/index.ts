@@ -11,10 +11,13 @@ dotenv.config()
 
 const app = express()
 const PORT = process.env.PORT || 3000
+const isDev = process.env.NODE_ENV !== 'production'
 
-// CORS 설정
+// CORS 설정 (환경변수로 관리)
+const corsOrigins = process.env.CORS_ORIGINS?.split(',') || ['http://localhost:5173']
+
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175'],
+  origin: corsOrigins,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
 }))
@@ -51,10 +54,18 @@ app.use((req, res) => {
   res.status(404).json({ error: 'Not Found' })
 })
 
-// 에러 핸들러
+// 에러 핸들러 (환경별 로깅 분리)
 app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error('Error:', err)
-  res.status(500).json({ error: 'Internal Server Error' })
+  if (isDev) {
+    console.error('Error:', err)
+  } else {
+    console.error('Error:', { message: err.message, path: req.path, timestamp: new Date().toISOString() })
+  }
+
+  res.status(500).json({
+    error: 'Internal Server Error',
+    ...(isDev && { message: err.message }),
+  })
 })
 
 // 서버 시작
