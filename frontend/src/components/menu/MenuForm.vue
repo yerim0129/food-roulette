@@ -35,6 +35,13 @@ const emojiOptions = [
 // 모달 제목
 const modalTitle = computed(() => props.editMenu ? 'EDIT MENU' : 'NEW MENU')
 
+// resetForm을 watch보다 먼저 정의
+const resetForm = () => {
+  name.value = ''
+  emoji.value = '🍽️'
+  categoryId.value = 1
+}
+
 // 편집 모드일 때 데이터 로드
 watch(() => props.editMenu, (menu) => {
   if (menu) {
@@ -45,12 +52,6 @@ watch(() => props.editMenu, (menu) => {
     resetForm()
   }
 }, { immediate: true })
-
-const resetForm = () => {
-  name.value = ''
-  emoji.value = '🍽️'
-  categoryId.value = 1
-}
 
 const handleSubmit = () => {
   if (!name.value.trim()) return

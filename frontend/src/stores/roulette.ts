@@ -1,20 +1,19 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { Food, Category } from '@/types'
+import type { Food } from '@/types'
+import { useMenuStore } from './menuStore'
 
 export const useRouletteStore = defineStore('roulette', () => {
+  // menuStore에서 categories 참조 (중복 제거)
+  const menuStore = useMenuStore()
+
   // State
   const foods = ref<Food[]>([])
-  const categories = ref<Category[]>([
-    { id: 1, name: '한식', emoji: '🍚', active: true },
-    { id: 2, name: '중식', emoji: '🥟', active: true },
-    { id: 3, name: '양식', emoji: '🍝', active: true },
-    { id: 4, name: '일식', emoji: '🍣', active: true },
-    { id: 5, name: '분식', emoji: '🍢', active: true },
-  ])
   const selectedFood = ref<Food | null>(null)
   const isSpinning = ref(false)
-  const history = ref<Food[]>([])
+
+  // categories는 menuStore에서 가져옴
+  const categories = computed(() => menuStore.categories)
 
   // Getters
   const activeCategories = computed(() =>
@@ -29,10 +28,7 @@ export const useRouletteStore = defineStore('roulette', () => {
 
   // Actions
   const toggleCategory = (categoryId: number) => {
-    const category = categories.value.find(cat => cat.id === categoryId)
-    if (category) {
-      category.active = !category.active
-    }
+    menuStore.toggleCategory(categoryId)
   }
 
   const spin = async () => {
@@ -46,10 +42,6 @@ export const useRouletteStore = defineStore('roulette', () => {
     // 랜덤 선택
     const randomIndex = Math.floor(Math.random() * filteredFoods.value.length)
     selectedFood.value = filteredFoods.value[randomIndex] ?? null
-
-    if (selectedFood.value) {
-      history.value.unshift(selectedFood.value)
-    }
 
     isSpinning.value = false
   }
@@ -67,7 +59,6 @@ export const useRouletteStore = defineStore('roulette', () => {
     categories,
     selectedFood,
     isSpinning,
-    history,
     activeCategories,
     filteredFoods,
     toggleCategory,

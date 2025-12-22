@@ -106,6 +106,14 @@ export const useMenuStore = defineStore('menu', () => {
     saveToStorage()
   }
 
+  // 카테고리 활성/비활성 토글
+  const toggleCategory = (categoryId: number) => {
+    const category = categories.value.find(cat => cat.id === categoryId)
+    if (category) {
+      category.active = !category.active
+    }
+  }
+
   // 초기 로드
   loadFromStorage()
 
@@ -120,5 +128,6 @@ export const useMenuStore = defineStore('menu', () => {
     updateMenu,
     deleteMenu,
     resetToDefault,
+    toggleCategory,
   }
 })

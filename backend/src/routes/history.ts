@@ -3,10 +3,21 @@ import prisma from '../lib/prisma'
 
 const router = Router()
 
+// 유효한 양의 정수인지 확인
+const isValidPositiveInt = (value: unknown): boolean => {
+  const num = Number(value)
+  return !isNaN(num) && Number.isInteger(num) && num > 0
+}
+
 // GET /api/history - 히스토리 조회
 router.get('/', async (req, res) => {
   try {
     const { limit = 50 } = req.query
+
+    // limit 유효성 검증
+    if (limit !== undefined && !isValidPositiveInt(limit)) {
+      return res.status(400).json({ error: 'limit must be a positive integer' })
+    }
 
     const history = await prisma.history.findMany({
       include: {
@@ -32,8 +43,14 @@ router.post('/', async (req, res) => {
   try {
     const { menuId } = req.body
 
+    // 필수 필드 검증
     if (!menuId) {
       return res.status(400).json({ error: 'menuId is required' })
+    }
+
+    // menuId 유효성 검증
+    if (!isValidPositiveInt(menuId)) {
+      return res.status(400).json({ error: 'menuId must be a positive integer' })
     }
 
     // 메뉴 존재 확인
@@ -69,6 +86,11 @@ router.post('/', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params
+
+    // id 유효성 검증
+    if (!isValidPositiveInt(id)) {
+      return res.status(400).json({ error: 'id must be a positive integer' })
+    }
 
     await prisma.history.delete({
       where: { id: Number(id) },

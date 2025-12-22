@@ -13,8 +13,3 @@ export interface Category {
   emoji: string
   active: boolean
 }
-
-export interface SpinResult {
-  food: Food
-  timestamp: Date
-}

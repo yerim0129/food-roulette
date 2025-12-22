@@ -1,32 +1,31 @@
 <script setup lang="ts">
 import { useRouletteStore } from '@/stores/roulette'
+import { useMenuStore } from '@/stores/menuStore'
+import { useHistoryStore } from '@/stores/historyStore'
 import { storeToRefs } from 'pinia'
-import { onMounted } from 'vue'
+import { onMounted, watch } from 'vue'
 
 const store = useRouletteStore()
+const menuStore = useMenuStore()
+const historyStore = useHistoryStore()
 const { selectedFood, isSpinning, categories, filteredFoods } = storeToRefs(store)
 const { toggleCategory, spin, reset, setFoods } = store
 
-// 샘플 데이터 로드
+// 룰렛 결과를 히스토리에 저장
+watch(selectedFood, (food) => {
+  if (food) {
+    historyStore.addHistory(food)
+  }
+})
+
+// menuStore에서 데이터 로드 (하드코딩 제거)
 onMounted(() => {
-  setFoods([
-    { id: 1, name: '김치찌개', emoji: '🍲', categoryId: 1 },
-    { id: 2, name: '비빔밥', emoji: '🍚', categoryId: 1 },
-    { id: 3, name: '불고기', emoji: '🥩', categoryId: 1 },
-    { id: 4, name: '삼겹살', emoji: '🥓', categoryId: 1 },
-    { id: 5, name: '짜장면', emoji: '🍝', categoryId: 2 },
-    { id: 6, name: '짬뽕', emoji: '🍜', categoryId: 2 },
-    { id: 7, name: '탕수육', emoji: '🍖', categoryId: 2 },
-    { id: 8, name: '파스타', emoji: '🍝', categoryId: 3 },
-    { id: 9, name: '피자', emoji: '🍕', categoryId: 3 },
-    { id: 10, name: '스테이크', emoji: '🥩', categoryId: 3 },
-    { id: 11, name: '초밥', emoji: '🍣', categoryId: 4 },
-    { id: 12, name: '라멘', emoji: '🍜', categoryId: 4 },
-    { id: 13, name: '돈카츠', emoji: '🍱', categoryId: 4 },
-    { id: 14, name: '떡볶이', emoji: '🍢', categoryId: 5 },
-    { id: 15, name: '순대', emoji: '🌭', categoryId: 5 },
-    { id: 16, name: '튀김', emoji: '🍤', categoryId: 5 },
-  ])
+  setFoods(menuStore.menus)
+})
+
+// menuStore 변경 시 동기화 (deep watch 대신 menus 길이 변화 감지)
+watch(() => menuStore.menus.length, () => {
+  setFoods(menuStore.menus)
 })
 </script>
 

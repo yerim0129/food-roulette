@@ -30,6 +30,8 @@ model Menu {
   histories   History[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+
+  @@index([categoryId])
 }
 
 model History {
@@ -37,4 +39,7 @@ model History {
   menu      Menu     @relation(fields: [menuId], references: [id], onDelete: Cascade)
   menuId    Int
   createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([menuId])
 }

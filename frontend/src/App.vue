@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
+import ErrorBoundary from '@/components/common/ErrorBoundary.vue'
 </script>
 
 <template>
@@ -45,7 +46,9 @@ import { RouterLink, RouterView } from 'vue-router'
 
     <!-- 메인 컨텐츠 -->
     <main class="pb-20">
-      <RouterView />
+      <ErrorBoundary>
+        <RouterView />
+      </ErrorBoundary>
     </main>
   </div>
 </template>

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useRouletteStore } from '@/stores/roulette'
+import { useHistoryStore } from '@/stores/historyStore'
 import { storeToRefs } from 'pinia'
 
-const store = useRouletteStore()
-const { history } = storeToRefs(store)
+const historyStore = useHistoryStore()
+const { history } = storeToRefs(historyStore)
 </script>
 
 <template>
@@ -26,17 +26,17 @@ const { history } = storeToRefs(store)
 
       <div v-else class="space-y-3">
         <div
-          v-for="(food, index) in history"
-          :key="index"
+          v-for="item in history"
+          :key="item.id"
           class="food-card flex items-center gap-4"
         >
-          <div class="text-3xl">{{ food.emoji }}</div>
-          <div>
+          <div class="text-3xl">{{ item.food.emoji }}</div>
+          <div class="flex-1">
             <p class="font-pixel text-retro-yellow text-sm">
-              {{ food.name }}
+              {{ item.food.name }}
             </p>
             <p class="font-arcade text-retro-cream text-xs">
-              #{{ history.length - index }}
+              {{ new Date(item.createdAt).toLocaleString('ko-KR') }}
             </p>
           </div>
         </div>
