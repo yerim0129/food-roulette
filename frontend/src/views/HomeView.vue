@@ -260,3 +260,4 @@ const getCategoryById = (categoryId: number) => {
   animation: glow 2s ease-in-out infinite;
 }
 </style>
+

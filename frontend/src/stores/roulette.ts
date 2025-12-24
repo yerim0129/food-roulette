@@ -67,3 +67,4 @@ export const useRouletteStore = defineStore('roulette', () => {
     setFoods,
   }
 })
+

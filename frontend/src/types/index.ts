@@ -19,3 +19,4 @@ export interface HistoryItem {
   food: Food
   createdAt: Date
 }
+

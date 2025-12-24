@@ -11,7 +11,8 @@
       "Bash(npx ts-node:*)",
       "Bash(PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION=\"해도 돼\" npx prisma db push:*)",
       "Bash(npx prisma:*)",
-      "Bash(yarn remove:*)"
+      "Bash(yarn remove:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nrefactor: 중복 코드 제거 및 유틸 통합\n\nBackend:\n- validation.ts 유틸 생성 (isValidPositiveInt, 길이 상수)\n- menus.ts, history.ts 검증 로직 통합\n- CORS 환경변수화, 환경별 에러 로깅\n- Menu.createdAt 인덱스 추가\n\nFrontend:\n- storage.ts 유틸 생성 (localStorage 공통 로직)\n- historyStore, menuStore에 storage 유틸 적용\n- HistoryItem 타입을 types/index.ts로 이동\n- 미사용 컴포넌트 삭제 (RetroHeader, RetroCard)\n\nDocs:\n- PERFORMANCE_OPTIMIZATION_V2.md 추가\n- REFACTORING_V3.md 추가\n- PROJECT_STATUS.md 추가\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n)\")"
     ],
     "deny": [],
     "ask": []
