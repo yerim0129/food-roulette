@@ -3,7 +3,13 @@
   "outputDirectory": "frontend/dist",
   "installCommand": "cd frontend && yarn install",
   "framework": "vite",
+  "functions": {
+    "api/*.ts": {
+      "runtime": "@vercel/node@3"
+    }
+  },
   "rewrites": [
+    { "source": "/api/:path*", "destination": "/api/:path*" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
