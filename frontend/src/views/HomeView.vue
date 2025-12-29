@@ -31,6 +31,10 @@ const isSpinning = ref(false)
 const showResult = ref(false)
 const resultFood = ref<Food | null>(null)
 
+// AI 추천 멘트
+const aiMessage = ref('')
+const isLoadingAI = ref(false)
+
 // 카테고리 토글
 const toggleCategory = (categoryId: number) => {
   const newSet = new Set(activeCategoryIds.value)
@@ -56,6 +60,34 @@ const startSpin = () => {
   isSpinning.value = true
 }
 
+// AI 추천 멘트 가져오기
+const fetchAIRecommendation = async (food: Food) => {
+  isLoadingAI.value = true
+  aiMessage.value = ''
+
+  try {
+    const category = getCategoryById(food.categoryId)
+    const response = await fetch('/api/recommend', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        foodName: food.name,
+        category: category?.name,
+      }),
+    })
+
+    if (response.ok) {
+      const data = await response.json()
+      aiMessage.value = data.message
+    }
+  } catch (error) {
+    console.error('AI recommendation error:', error)
+    aiMessage.value = `오늘의 선택 ${food.name}! 맛있게 드세요 😋`
+  } finally {
+    isLoadingAI.value = false
+  }
+}
+
 // 스핀 종료 처리
 const handleSpinEnd = (menu: Food) => {
   isSpinning.value = false
@@ -64,6 +96,9 @@ const handleSpinEnd = (menu: Food) => {
 
   // 히스토리에 저장
   historyStore.addHistory(menu)
+
+  // AI 추천 멘트 가져오기
+  fetchAIRecommendation(menu)
 }
 
 // 다시 돌리기
@@ -71,6 +106,7 @@ const spinAgain = () => {
   showResult.value = false
   resultFood.value = null
   showNearby.value = false
+  aiMessage.value = ''
 }
 
 // 근처 맛집 표시 상태
@@ -196,10 +232,14 @@ const getCategoryById = (categoryId: number) => {
           {{ getCategoryById(resultFood.categoryId)?.name }}
         </p>
 
-        <!-- 축하 메시지 -->
-        <div class="mt-6 p-4 border-2 border-neon-green/50 bg-neon-green/10">
-          <p class="font-korean text-neon-green">
-            🎉 오늘의 메뉴가 정해졌습니다! 🎉
+        <!-- AI 추천 멘트 -->
+        <div class="mt-6 p-4 border-2 border-neon-green/50 bg-neon-green/10 min-h-[60px]">
+          <div v-if="isLoadingAI" class="flex items-center justify-center gap-2">
+            <span class="animate-pulse">🤖</span>
+            <span class="font-korean text-neon-green/70 text-sm">AI가 멘트를 생성중...</span>
+          </div>
+          <p v-else class="font-korean text-neon-green">
+            {{ aiMessage || '🎉 오늘의 메뉴가 정해졌습니다! 🎉' }}
           </p>
         </div>
 
@@ -260,4 +300,5 @@ const getCategoryById = (categoryId: number) => {
   animation: glow 2s ease-in-out infinite;
 }
 </style>
+
 
