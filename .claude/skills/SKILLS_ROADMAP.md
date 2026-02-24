@@ -17,7 +17,7 @@
 
 파일이 충분히 쌓여 있어서 규칙을 추출하기 좋은 시점입니다.
 
-#### [ ] `verify-stores`
+#### [x] `verify-stores`
 
 Pinia store 3개(`menuStore.ts`, `historyStore.ts`, `roulette.ts`)가 일관된 규칙을 따르는지 검사합니다.
 
@@ -261,7 +261,7 @@ Vite 빌드 결과물에서 번들 크기 이슈를 찾습니다.
 
 | 스킬 | 유형 | 상태 | 비고 |
 |------|------|------|------|
-| `verify-stores` | 검증 | ⬜ 미시작 | Phase 1, 지금 바로 가능 |
+| `verify-stores` | 검증 | ✅ 완료 | Phase 1 |
 | `verify-components` | 검증 | ⬜ 미시작 | Phase 1, 지금 바로 가능 |
 | `verify-api` | 검증 | ⬜ 미시작 | Phase 1, 지금 바로 가능 |
 | `verify-types` | 검증 | ⬜ 미시작 | Phase 1, 지금 바로 가능 |
