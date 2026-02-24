@@ -18,13 +18,11 @@
 - **Build Tool**: Vite
 - **Package Manager**: Yarn
 
-### Backend
+### Serverless (Vercel Functions)
 - **Runtime**: Node.js
-- **Framework**: Express 5
 - **Language**: TypeScript
-- **ORM**: Prisma
-- **Database**: SQLite
-- **Package Manager**: Yarn
+- **배포**: Vercel (`api/` 폴더 자동 인식)
+- **로컬 테스트**: `vercel dev`
 
 ---
 
@@ -48,21 +46,67 @@ food-roulette/
 │   ├── vite.config.ts       # Vite 설정
 │   └── package.json
 │
-├── backend/                  # Express API 서버
-│   ├── src/
-│   │   ├── routes/          # API 라우트
-│   │   ├── controllers/     # 컨트롤러
-│   │   ├── services/        # 비즈니스 로직
-│   │   ├── types/           # TypeScript 타입
-│   │   ├── middleware/      # 미들웨어
-│   │   └── index.ts         # 서버 엔트리
-│   ├── prisma/
-│   │   └── schema.prisma    # DB 스키마
-│   ├── tsconfig.json
-│   └── package.json
+├── api/                      # Vercel Serverless Functions (백엔드 역할)
+│   └── recommend.ts          # AI 추천 멘트 (Gemini 연동)
 │
 └── CLAUDE.md                 # 이 파일
 ```
+
+---
+
+## 개발 환경 세팅 (처음 또는 새 PC에서 시작할 때)
+
+### 1. 필수 도구 설치 (최초 1회)
+
+```bash
+# Yarn 설치
+npm install -g yarn
+
+# Vercel CLI 설치
+npm install -g vercel
+
+# Vercel 로그인 (브라우저에서 인증)
+vercel login
+```
+
+### 2. 의존성 설치
+
+```bash
+cd frontend
+yarn install
+```
+
+### 3. 로컬 실행
+
+터미널 2개를 열어서 각각 실행합니다.
+
+**터미널 1 — 프론트엔드**
+```bash
+cd frontend
+yarn dev
+# → http://localhost:5173 에서 확인
+```
+
+**터미널 2 — Vercel Functions (api/)**
+```bash
+# 프로젝트 루트(food-roulette/)에서 실행
+vercel dev
+# → api/ 함수가 http://localhost:3000 에서 실행됨
+```
+
+> `vercel dev`는 프론트엔드가 아닌 `api/` 폴더의 함수만 실행합니다.
+> 프론트엔드는 반드시 별도로 `yarn dev`를 실행해야 합니다.
+
+### 4. 환경 변수 설정
+
+`api/` 함수가 Gemini API를 사용하려면 환경변수가 필요합니다.
+
+**로컬:** 프로젝트 루트에 `.env` 파일 생성
+```
+GEMINI_API_KEY=your_key_here
+```
+
+**배포(Vercel):** Vercel 대시보드 → 프로젝트 Settings → Environment Variables에서 설정
 
 ---
 
@@ -77,40 +121,10 @@ yarn build            # 프로덕션 빌드
 yarn preview          # 빌드 프리뷰
 ```
 
-### Backend
+### Vercel Functions (api/)
 ```bash
-cd backend
-yarn install          # 의존성 설치
-yarn prisma generate  # (최초 1회/스키마 변경 시) Prisma Client 코드 생성
-yarn db:push          # (최초 1회/스키마 변경 시) DB 테이블 반영 (SQLite)
-yarn dev              # 개발 서버 (http://localhost:3000)
-yarn build            # TypeScript 컴파일
-yarn start            # 프로덕션 실행
-yarn db:migrate       # DB 마이그레이션
-yarn db:studio        # Prisma Studio
+vercel dev            # 루트에서 실행 — api/ 함수 로컬 테스트 (http://localhost:3000)
 ```
-
-### Yarn 설치 (미설치 시)
-Yarn이 없으면 `yarn: command not found`가 난다. 아래 중 하나로 설치 후 사용.
-
-```bash
-# npm 전역 설치 (아무 경로에서 실행)
-npm install -g yarn
-
-```
-
-**의존성 설치 경로**
-- 프론트엔드 의존성 → `frontend` 폴더에서 `yarn install`
-- 백엔드 의존성 → `backend` 폴더에서 `yarn install`
-- 루트에서는 실행하지 않음 (frontend/backend 각각 package.json 보유)
-
-**`-g` (전역) 범위**
-- `npm install -g yarn` 같은 `-g`는 **전역(global)** 설치.
-- **범위**: 이 PC에 설치된 Node.js 한 환경 전체. 프로젝트/폴더와 무관.
-- **사용처**: 터미널을 연 **어느 디렉터리**에서든 `yarn` 명령 사용 가능.
-- **용도**: `yarn`, `vue-cli` 같은 **실행용 CLI 도구** 설치할 때 사용.
-
-Yarn 없이 당장만 설치하려면 각 폴더에서 `npm install`로 대체 가능.
 
 ---
 
@@ -187,16 +201,11 @@ retro-cream:  #f5f0e1   - 텍스트
 
 ---
 
-## API 엔드포인트
+## Vercel Functions 엔드포인트
 
-| Method | Endpoint | 설명 |
-|--------|----------|------|
-| GET | `/api/health` | 헬스 체크 |
-| GET | `/api/categories` | 카테고리 목록 |
-| GET | `/api/foods` | 음식 목록 |
-| GET | `/api/foods/:categoryId` | 카테고리별 음식 |
-| POST | `/api/history` | 히스토리 저장 |
-| GET | `/api/history` | 히스토리 조회 |
+| Method | Endpoint | 파일 | 설명 |
+|--------|----------|------|------|
+| POST | `/api/recommend` | `api/recommend.ts` | AI 추천 멘트 (Gemini) |
 
 ---
 
@@ -256,15 +265,15 @@ docs: 문서 수정
 
 ## 환경 변수
 
-### Backend (.env)
+### Vercel (환경변수 설정 필요)
 ```
-DATABASE_URL="file:./dev.db"
-PORT=3000
+GEMINI_API_KEY=your_key_here
 ```
 
 ### Frontend (.env)
 ```
-VITE_API_URL=http://localhost:3000/api
+# 로컬 개발 시 vercel dev 포트에 맞게 설정
+VITE_API_URL=http://localhost:3000
 ```
 
 ---
