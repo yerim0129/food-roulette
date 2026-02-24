@@ -31,6 +31,7 @@ argument-hint: "[선택사항: 특정 스킬 이름 또는 집중할 영역]"
 | 스킬 | 설명 | 커버 파일 패턴 |
 |------|------|---------------|
 | `verify-stores` | Pinia store 3개의 작성 규칙 검증 | `frontend/src/stores/*.ts` |
+| `verify-components` | Vue 컴포넌트 13개의 작성 규칙 검증 | `frontend/src/components/**/*.vue`, `frontend/src/views/*.vue` |
 
 ## 워크플로우
 

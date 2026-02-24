@@ -30,6 +30,7 @@ argument-hint: "[선택사항: 특정 verify 스킬 이름]"
 | # | 스킬 | 설명 |
 |---|------|------|
 | 1 | `verify-stores` | Pinia store 3개의 작성 규칙 검증 |
+| 2 | `verify-components` | Vue 컴포넌트 13개의 작성 규칙 검증 |
 -->
 
 ## 워크플로우
