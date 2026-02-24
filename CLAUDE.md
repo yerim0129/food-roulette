@@ -81,13 +81,36 @@ yarn preview          # 빌드 프리뷰
 ```bash
 cd backend
 yarn install          # 의존성 설치
+yarn prisma generate  # (최초 1회/스키마 변경 시) Prisma Client 코드 생성
+yarn db:push          # (최초 1회/스키마 변경 시) DB 테이블 반영 (SQLite)
 yarn dev              # 개발 서버 (http://localhost:3000)
 yarn build            # TypeScript 컴파일
 yarn start            # 프로덕션 실행
-yarn db:push          # DB 스키마 푸시
 yarn db:migrate       # DB 마이그레이션
 yarn db:studio        # Prisma Studio
 ```
+
+### Yarn 설치 (미설치 시)
+Yarn이 없으면 `yarn: command not found`가 난다. 아래 중 하나로 설치 후 사용.
+
+```bash
+# npm 전역 설치 (아무 경로에서 실행)
+npm install -g yarn
+
+```
+
+**의존성 설치 경로**
+- 프론트엔드 의존성 → `frontend` 폴더에서 `yarn install`
+- 백엔드 의존성 → `backend` 폴더에서 `yarn install`
+- 루트에서는 실행하지 않음 (frontend/backend 각각 package.json 보유)
+
+**`-g` (전역) 범위**
+- `npm install -g yarn` 같은 `-g`는 **전역(global)** 설치.
+- **범위**: 이 PC에 설치된 Node.js 한 환경 전체. 프로젝트/폴더와 무관.
+- **사용처**: 터미널을 연 **어느 디렉터리**에서든 `yarn` 명령 사용 가능.
+- **용도**: `yarn`, `vue-cli` 같은 **실행용 CLI 도구** 설치할 때 사용.
+
+Yarn 없이 당장만 설치하려면 각 폴더에서 `npm install`로 대체 가능.
 
 ---
 
