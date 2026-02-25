@@ -78,24 +78,14 @@ yarn install
 
 ### 3. 로컬 실행
 
-터미널 2개를 열어서 각각 실행합니다.
-
-**터미널 1 — 프론트엔드**
 ```bash
 cd frontend
 yarn dev
 # → http://localhost:5173 에서 확인
 ```
 
-**터미널 2 — Vercel Functions (api/)**
-```bash
-# 프로젝트 루트(food-roulette/)에서 실행
-vercel dev
-# → api/ 함수가 http://localhost:3000 에서 실행됨
-```
-
-> `vercel dev`는 프론트엔드가 아닌 `api/` 폴더의 함수만 실행합니다.
-> 프론트엔드는 반드시 별도로 `yarn dev`를 실행해야 합니다.
+> AI 추천 멘트는 로컬에서 기본 메시지로 표시됩니다.
+> 실제 AI 멘트는 Vercel 배포 환경에서 GEMINI_API_KEY 설정 후 확인 가능합니다.
 
 ### 4. 환경 변수 설정
 
@@ -119,11 +109,6 @@ yarn install          # 의존성 설치
 yarn dev              # 개발 서버 (http://localhost:5173)
 yarn build            # 프로덕션 빌드
 yarn preview          # 빌드 프리뷰
-```
-
-### Vercel Functions (api/)
-```bash
-vercel dev            # 루트에서 실행 — api/ 함수 로컬 테스트 (http://localhost:3000)
 ```
 
 ---
@@ -270,11 +255,8 @@ docs: 문서 수정
 GEMINI_API_KEY=your_key_here
 ```
 
-### Frontend (.env)
-```
-# 로컬 개발 시 vercel dev 포트에 맞게 설정
-VITE_API_URL=http://localhost:3000
-```
+### Frontend
+로컬 개발 시 별도 환경변수 불필요.
 
 ---
 

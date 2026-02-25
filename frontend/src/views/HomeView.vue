@@ -65,6 +65,9 @@ const fetchAIRecommendation = async (food: Food) => {
   isLoadingAI.value = true
   aiMessage.value = ''
 
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), 3000)
+
   try {
     const category = getCategoryById(food.categoryId)
     const response = await fetch('/api/recommend', {
@@ -74,16 +77,19 @@ const fetchAIRecommendation = async (food: Food) => {
         foodName: food.name,
         category: category?.name,
       }),
+      signal: controller.signal,
     })
 
     if (response.ok) {
       const data = await response.json()
       aiMessage.value = data.message
+    } else {
+      aiMessage.value = `오늘의 선택 ${food.name}! 맛있게 드세요 😋`
     }
-  } catch (error) {
-    console.error('AI recommendation error:', error)
+  } catch {
     aiMessage.value = `오늘의 선택 ${food.name}! 맛있게 드세요 😋`
   } finally {
+    clearTimeout(timeout)
     isLoadingAI.value = false
   }
 }
