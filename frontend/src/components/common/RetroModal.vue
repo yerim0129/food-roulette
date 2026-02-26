@@ -30,14 +30,14 @@ const handleBackdropClick = (event: MouseEvent) => {
   }
 }
 
-// ESC 키로 닫기
-watch(() => props.modelValue, (isOpen) => {
-  const handleEsc = (e: KeyboardEvent) => {
-    if (e.key === 'Escape' && props.closable) {
-      close()
-    }
+// ESC 키로 닫기 — 함수를 바깥에 고정해야 동일 참조로 제거 가능
+const handleEsc = (e: KeyboardEvent) => {
+  if (e.key === 'Escape' && props.closable) {
+    close()
   }
+}
 
+watch(() => props.modelValue, (isOpen) => {
   if (isOpen) {
     document.addEventListener('keydown', handleEsc)
     document.body.style.overflow = 'hidden'
