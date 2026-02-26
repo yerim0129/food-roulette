@@ -17,15 +17,7 @@ import ErrorBoundary from '@/components/common/ErrorBoundary.vue'
           <span class="text-xl mb-1">🏠</span>
           <span>HOME</span>
         </RouterLink>
-        <RouterLink
-          to="/roulette"
-          class="flex flex-col items-center font-pixel text-xs text-white/70 hover:text-neon-cyan transition-colors"
-          active-class="!text-neon-pink"
-        >
-          <span class="text-xl mb-1">🎰</span>
-          <span>PLAY</span>
-        </RouterLink>
-        <RouterLink
+<RouterLink
           to="/menu"
           class="flex flex-col items-center font-pixel text-xs text-white/70 hover:text-neon-cyan transition-colors"
           active-class="!text-neon-pink"
